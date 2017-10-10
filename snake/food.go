@@ -1,4 +1,4 @@
-package main
+package snake
 
 type food struct {
 	emoji        rune

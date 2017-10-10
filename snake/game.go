@@ -1,8 +1,52 @@
-package main
+// Copyright (c) 2017 Alex Pliutau
+
+package snake
 
 import (
 	"time"
 )
+
+func NewGame() *game {
+	return &game{arena: initialArena(), score: initialScore()}
+}
+
+func (g *game) Start() {
+	go listenToKeyboard(keyboardEventsChan)
+
+	//if err := g.render(); err != nil {
+	//	panic(err)
+	//}
+
+mainloop:
+	for {
+		select {
+		case p := <-pointsChan:
+			g.addPoints(p)
+		case e := <-keyboardEventsChan:
+			switch e.eventType {
+			case MOVE:
+				d := keyToDirection(e.key)
+				g.arena.snake.changeDirection(d)
+			case RETRY:
+				g.retry()
+			case END:
+				break mainloop
+			}
+		default:
+			if !g.isOver {
+				if err := g.arena.moveSnake(); err != nil {
+					g.end()
+				}
+			}
+
+			//if err := g.render(); err != nil {
+			//	panic(err)
+			//}
+
+			time.Sleep(g.moveInterval())
+		}
+	}
+}
 
 var (
 	pointsChan         = make(chan int)
@@ -49,46 +93,4 @@ func (g *game) retry() {
 
 func (g *game) addPoints(p int) {
 	g.score += p
-}
-
-func NewGame() *game {
-	return &game{arena: initialArena(), score: initialScore()}
-}
-
-func (g *game) Start() {
-	go listenToKeyboard(keyboardEventsChan)
-
-	//if err := g.render(); err != nil {
-	//	panic(err)
-	//}
-
-mainloop:
-	for {
-		select {
-		case p := <-pointsChan:
-			g.addPoints(p)
-		case e := <-keyboardEventsChan:
-			switch e.eventType {
-			case MOVE:
-				d := keyToDirection(e.key)
-				g.arena.snake.changeDirection(d)
-			case RETRY:
-				g.retry()
-			case END:
-				break mainloop
-			}
-		default:
-			if !g.isOver {
-				if err := g.arena.moveSnake(); err != nil {
-					g.end()
-				}
-			}
-
-			//if err := g.render(); err != nil {
-			//	panic(err)
-			//}
-
-			time.Sleep(g.moveInterval())
-		}
-	}
 }
