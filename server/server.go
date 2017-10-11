@@ -3,7 +3,6 @@
 package server
 
 import (
-	"bufio"
 	"flag"
 	"log"
 	"net"
@@ -46,7 +45,7 @@ func runServer(listener net.Listener) {
 		}
 
 		log.Println("Accepted incoming connection from " + conn.RemoteAddr().String())
-		go handleConnection(conn)
+		handleConnection(conn)
 		go runTicker(time.Tick(1*time.Second), conn)
 	}
 
@@ -54,19 +53,18 @@ func runServer(listener net.Listener) {
 }
 
 func runTicker(tick <-chan time.Time, conn net.Conn) {
-	w := bufio.NewWriter(conn)
-
 	for range tick {
 		if !serverRunning || conn == nil {
 			continue
 		}
 
 		// TODO: call ticker function
-		w.Write([]byte("\rTick"))
-		w.Flush()
+		// Move to 0:0 and render
+		conn.Write([]byte("\033[0;0HTick1\nTick2"))
 	}
 }
 
 func handleConnection(conn net.Conn) {
-	// TODO: Do something with client connection
+	// Clear screen and move to 0:0
+	conn.Write([]byte("\033[2J\033[0;0H"))
 }
