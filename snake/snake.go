@@ -58,11 +58,11 @@ func (s *snake) move() error {
 	case RIGHT:
 		c.x++
 	case LEFT:
-		c.x++
+		c.x--
 	case UP:
 		c.y++
 	case DOWN:
-		c.y++
+		c.y--
 	}
 
 	if s.isOnPosition(c) {
