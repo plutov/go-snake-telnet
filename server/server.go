@@ -7,18 +7,26 @@ import (
 	"log"
 	"net"
 	"time"
+
+	"github.com/plutov/go-snake-telnet/snake"
 )
 
 var (
-	serverRunning = false
-	host          string
-	port          string
+	host string
+	port string
 )
+
+const (
+	leftTopASCII = "\033[0;0H"
+	clearASCII   = "\033[2J"
+)
+
+type server struct {
+	listener net.Listener
+}
 
 // Run prepars the telnet server and begins running it.
 func Run() {
-	serverRunning = true
-
 	flag.StringVar(&host, "host", "localhost", "TCP Host")
 	flag.StringVar(&port, "port", "50000", "TCP Port")
 	flag.Parse()
@@ -30,41 +38,37 @@ func Run() {
 
 	log.Println("TCP server started on " + host + ":" + port)
 
-	runServer(listener)
+	server := new(server)
+	server.listener = listener
+	server.runServer()
 }
 
-func runServer(listener net.Listener) {
-	defer listener.Close()
+func (s *server) runServer() {
+	defer s.listener.Close()
 
-	for serverRunning {
-		conn, err := listener.Accept()
+	for {
+		conn, err := s.listener.Accept()
 		if err != nil {
-			log.Println("Failed to accept connection")
+			log.Printf("Failed to accept connection: %s\n", err.Error())
 
 			continue
 		}
 
 		log.Println("Accepted incoming connection from " + conn.RemoteAddr().String())
-		handleConnection(conn)
-		go runTicker(time.Tick(1*time.Second), conn)
-	}
 
-	log.Println("Server is not running anymore.")
-}
-
-func runTicker(tick <-chan time.Time, conn net.Conn) {
-	for range tick {
-		if !serverRunning || conn == nil {
-			continue
-		}
-
-		// TODO: call ticker function
-		// Move to 0:0 and render
-		conn.Write([]byte("\033[0;0HTick1\nTick2"))
+		game := snake.NewGame()
+		go s.handleConnection(conn, game)
 	}
 }
 
-func handleConnection(conn net.Conn) {
+func (s *server) handleConnection(conn net.Conn, game *snake.Game) {
 	// Clear screen and move to 0:0
-	conn.Write([]byte("\033[2J\033[0;0H"))
+	conn.Write([]byte(clearASCII + leftTopASCII))
+	conn.Write([]byte(leftTopASCII + game.Render()))
+
+	tick := time.Tick(1 * time.Second)
+	for range tick {
+		// Move to 0:0 and render
+		conn.Write([]byte(leftTopASCII + game.Render()))
+	}
 }

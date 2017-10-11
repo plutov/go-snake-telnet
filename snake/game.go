@@ -6,42 +6,40 @@ import (
 	"time"
 )
 
-func NewGame() *game {
-	return &game{arena: initialArena(), score: initialScore()}
+const (
+	// Version const
+	Version = "v0.0"
+)
+
+// Game type
+type Game struct {
+	arena  *arena
+	score  int
+	isOver bool
 }
 
-func (g *game) Start() {
+// NewGame returns Game obj
+func NewGame() *Game {
+	return &Game{arena: initialArena(), score: initialScore()}
+}
+
+// Start game func
+func (g *Game) Start() {
 	go listenToKeyboard(keyboardEventsChan)
 
-	//if err := g.render(); err != nil {
-	//	panic(err)
-	//}
-
-mainloop:
 	for {
 		select {
 		case p := <-pointsChan:
 			g.addPoints(p)
 		case e := <-keyboardEventsChan:
-			switch e.eventType {
-			case MOVE:
-				d := keyToDirection(e.key)
-				g.arena.snake.changeDirection(d)
-			case RETRY:
-				g.retry()
-			case END:
-				break mainloop
-			}
+			d := keyToDirection(e.key)
+			g.arena.snake.changeDirection(d)
 		default:
 			if !g.isOver {
 				if err := g.arena.moveSnake(); err != nil {
 					g.end()
 				}
 			}
-
-			//if err := g.render(); err != nil {
-			//	panic(err)
-			//}
 
 			time.Sleep(g.moveInterval())
 		}
@@ -52,12 +50,6 @@ var (
 	pointsChan         = make(chan int)
 	keyboardEventsChan = make(chan keyboardEvent)
 )
-
-type game struct {
-	arena  *arena
-	score  int
-	isOver bool
-}
 
 func initialSnake() *snake {
 	return newSnake(RIGHT, []coord{
@@ -73,24 +65,24 @@ func initialScore() int {
 }
 
 func initialArena() *arena {
-	return newArena(initialSnake(), pointsChan, 20, 50)
+	return newArena(initialSnake(), pointsChan, 20, 20)
 }
 
-func (g *game) end() {
+func (g *Game) end() {
 	g.isOver = true
 }
 
-func (g *game) moveInterval() time.Duration {
+func (g *Game) moveInterval() time.Duration {
 	ms := 100 - (g.score / 10)
 	return time.Duration(ms) * time.Millisecond
 }
 
-func (g *game) retry() {
+func (g *Game) retry() {
 	g.arena = initialArena()
 	g.score = initialScore()
 	g.isOver = false
 }
 
-func (g *game) addPoints(p int) {
+func (g *Game) addPoints(p int) {
 	g.score += p
 }

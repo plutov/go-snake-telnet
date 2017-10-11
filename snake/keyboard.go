@@ -1,18 +1,11 @@
-package snake
+// Copyright (c) 2017 Alex Pliutau
 
-type keyboardEventType int
+package snake
 
 type keyboardKey rune
 
-const (
-	MOVE keyboardEventType = 1 + iota
-	RETRY
-	END
-)
-
 type keyboardEvent struct {
-	eventType keyboardEventType
-	key       string
+	key string
 }
 
 func keyToDirection(k string) direction {
@@ -33,6 +26,6 @@ func keyToDirection(k string) direction {
 func listenToKeyboard(evChan chan keyboardEvent) {
 	for {
 		var key = ""
-		evChan <- keyboardEvent{eventType: MOVE, key: key}
+		evChan <- keyboardEvent{key: key}
 	}
 }
