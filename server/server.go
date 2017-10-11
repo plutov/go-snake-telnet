@@ -3,6 +3,7 @@
 package server
 
 import (
+	"bufio"
 	"flag"
 	"log"
 	"net"
@@ -13,7 +14,6 @@ var (
 	serverRunning = false
 	host          string
 	port          string
-	conn          net.Conn
 )
 
 // Run prepars the telnet server and begins running it.
@@ -36,11 +36,9 @@ func Run() {
 
 func runServer(listener net.Listener) {
 	defer listener.Close()
-	go runTicker(time.Tick(1 * time.Second))
 
-	var err error
 	for serverRunning {
-		conn, err = listener.Accept()
+		conn, err := listener.Accept()
 		if err != nil {
 			log.Println("Failed to accept connection")
 
@@ -48,21 +46,27 @@ func runServer(listener net.Listener) {
 		}
 
 		log.Println("Accepted incoming connection from " + conn.RemoteAddr().String())
-		go handleConnection()
+		go handleConnection(conn)
+		go runTicker(time.Tick(1*time.Second), conn)
 	}
+
+	log.Println("Server is not running anymore.")
 }
 
-func runTicker(tick <-chan time.Time) {
+func runTicker(tick <-chan time.Time, conn net.Conn) {
+	w := bufio.NewWriter(conn)
+
 	for range tick {
 		if !serverRunning || conn == nil {
-			return
+			continue
 		}
 
 		// TODO: call ticker function
-		conn.Write([]byte("Tick.\r\n"))
+		w.Write([]byte("\rTick"))
+		w.Flush()
 	}
 }
 
-func handleConnection() {
-	conn.Write([]byte("Welcome to Telnet Snake.\r\n"))
+func handleConnection(conn net.Conn) {
+	// TODO: Do something with client connection
 }
