@@ -6,13 +6,9 @@ import (
 	"time"
 )
 
-const (
-	// Version const
-	Version = "v0.0"
-)
-
 // Game type
 type Game struct {
+	matrix *matrix
 	arena  *arena
 	score  int
 	isOver bool
