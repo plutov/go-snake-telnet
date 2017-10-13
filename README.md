@@ -1,2 +1,15 @@
-# go-snake-telnet
-Snake Game which can be played over telnet protocol
+### Snake over Telnet in Go
+
+Try it:
+
+```
+telnet pliutau.com 8080
+```
+
+
+### Development
+
+```
+go get github.com/plutov/go-snake-telnet
+go-snake-telnet --host localhost --port 8080
+```

@@ -5,6 +5,7 @@ package server
 import (
 	"bufio"
 	"flag"
+	"io"
 	"log"
 	"net"
 	"strings"
@@ -35,7 +36,7 @@ func Run() {
 
 	listener, err := net.Listen("tcp", host+":"+port)
 	if err != nil {
-		log.Fatal("Failed to start TCP server.")
+		log.Fatal("Failed to start TCP server: " + err.Error())
 	}
 
 	log.Println("TCP server started on " + host + ":" + port)
@@ -102,6 +103,11 @@ func (s *server) read(conn net.Conn, game *snake.Game) {
 			}
 		} else {
 			log.Println("Read error: " + err.Error())
+			if err == io.EOF {
+				game.IsOver = true
+				conn.Close()
+				return
+			}
 		}
 	}
 }
