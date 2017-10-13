@@ -1,17 +1,18 @@
 package snake
 
-type cell struct {
-	symbol string
-}
+import (
+	"fmt"
+)
 
 type matrix struct {
-	cells [][]cell
+	cells [][]string
 }
 
 const (
-	title          = "Go Snake Telnet v0.1"
+	title          = "Go Snake Telnet v0.2"
+	author         = "Author: pliutau.com"
 	move           = "Move:"
-	usage          = "w,d,s,a <Enter>"
+	usage          = "W,D,S,A <Enter>"
 	score          = "Score: "
 	input          = "Your input: "
 	horizontalLine = "-"
@@ -19,6 +20,7 @@ const (
 	emptySymbol    = " "
 	snakeSymbol    = "x"
 	foodSymbol     = "@"
+	gameOver       = "Game over!"
 	fieldTop       = 6
 	fieldLeft      = 1
 )
@@ -30,7 +32,7 @@ func (g *Game) Render() string {
 	m := g.genMatrix()
 	for _, row := range m.cells {
 		for _, cell := range row {
-			ascii += cell.symbol
+			ascii += cell
 		}
 		ascii += "\n"
 	}
@@ -41,40 +43,44 @@ func (g *Game) Render() string {
 func (g *Game) genMatrix() *matrix {
 	m := new(matrix)
 	m.renderTitle(g.arena)
-	m.renderArena(g.arena)
-	m.renderSnake(g.arena.snake)
-	m.renderFood(10, 10, nil)
+	m.renderArena(g.arena, g)
+	if !g.IsOver {
+		m.renderFood(g.arena.food.x, g.arena.food.y)
+		m.renderSnake(g.arena.snake)
+	}
+
 	m.renderScore(g.arena, g.score)
 	return m
 }
 
-func (m *matrix) renderArena(a *arena) {
-	horizontal := []cell{}
-	horizontal = append(horizontal, cell{
-		symbol: verticalLine,
-	})
+func (m *matrix) renderArena(a *arena, g *Game) {
+	horizontal := []string{}
+	horizontal = append(horizontal, verticalLine)
 	for i := 0; i < a.width; i++ {
-		horizontal = append(horizontal, cell{
-			symbol: horizontalLine,
-		})
+		horizontal = append(horizontal, horizontalLine)
 	}
-	horizontal = append(horizontal, cell{
-		symbol: verticalLine,
-	})
+	horizontal = append(horizontal, verticalLine)
 
 	m.cells = append(m.cells, horizontal)
 	for i := 0; i < a.height; i++ {
-		row := []cell{cell{
-			symbol: verticalLine,
-		}}
-		for i := 0; i < a.width; i++ {
-			row = append(row, cell{
-				symbol: emptySymbol,
-			})
+		if i == 1 && g.IsOver {
+			row := []string{verticalLine, emptySymbol}
+			for _, r := range gameOver {
+				row = append(row, string(r))
+			}
+			for j := len(gameOver) + 1; j < a.width; j++ {
+				row = append(row, emptySymbol)
+			}
+			row = append(row, verticalLine)
+			m.cells = append(m.cells, row)
+			continue
 		}
-		row = append(row, cell{
-			symbol: verticalLine,
-		})
+
+		row := []string{verticalLine}
+		for i := 0; i < a.width; i++ {
+			row = append(row, emptySymbol)
+		}
+		row = append(row, verticalLine)
 		m.cells = append(m.cells, row)
 	}
 
@@ -83,27 +89,24 @@ func (m *matrix) renderArena(a *arena) {
 
 func (m *matrix) renderSnake(s *snake) {
 	for _, b := range s.body {
-		m.cells[b.x+fieldTop][b.y+fieldLeft] = cell{
-			symbol: snakeSymbol,
-		}
+		m.cells[b.x+fieldTop][b.y+fieldLeft] = snakeSymbol
 	}
 }
 
-func (m *matrix) renderFood(x, y int, f *food) {
-	m.cells[x+fieldTop][y+fieldLeft] = cell{
-		symbol: foodSymbol,
-	}
+func (m *matrix) renderFood(x, y int) {
+	m.cells[x+fieldTop][y+fieldLeft] = foodSymbol
 }
 
 func (m *matrix) renderScore(a *arena, scoreVal int) {
 	m.addEmptyRow(a)
-	m.renderString(score + string(scoreVal))
+	m.renderString(fmt.Sprintf("%s%d", score, scoreVal))
 	m.addEmptyRow(a)
 	m.renderString(input)
 }
 
 func (m *matrix) renderTitle(a *arena) {
 	m.renderString(title)
+	m.renderString(author)
 	m.addEmptyRow(a)
 	m.renderString(move)
 	m.renderString(usage)
@@ -111,21 +114,17 @@ func (m *matrix) renderTitle(a *arena) {
 }
 
 func (m *matrix) addEmptyRow(a *arena) {
-	empty := []cell{}
+	empty := []string{}
 	for i := 0; i < a.width; i++ {
-		empty = append(empty, cell{
-			symbol: emptySymbol,
-		})
+		empty = append(empty, emptySymbol)
 	}
 	m.cells = append(m.cells, empty)
 }
 
 func (m *matrix) renderString(s string) {
-	row := []cell{}
+	row := []string{}
 	for _, r := range s {
-		row = append(row, cell{
-			symbol: string(r),
-		})
+		row = append(row, string(r))
 	}
 	m.cells = append(m.cells, row)
 }

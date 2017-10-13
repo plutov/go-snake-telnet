@@ -3,6 +3,7 @@
 package snake
 
 import (
+	"log"
 	"time"
 )
 
@@ -12,7 +13,7 @@ type Game struct {
 	matrix             *matrix
 	arena              *arena
 	score              int
-	isOver             bool
+	IsOver             bool
 }
 
 // NewGame returns Game obj
@@ -35,10 +36,13 @@ func (g *Game) Start() {
 			d := keyToDirection(e.Key)
 			g.arena.snake.changeDirection(d)
 		default:
-			if !g.isOver {
-				if err := g.arena.moveSnake(); err != nil {
-					g.end()
-				}
+			if g.IsOver {
+				log.Printf("Game over, score: %d\n", g.score)
+				return
+			}
+
+			if err := g.arena.moveSnake(); err != nil {
+				g.IsOver = true
 			}
 
 			time.Sleep(g.moveInterval())
@@ -48,8 +52,6 @@ func (g *Game) Start() {
 
 var (
 	pointsChan = make(chan int)
-	// KeyboardEventsChan - keyboard input will go here
-
 )
 
 func initialSnake() *snake {
@@ -69,18 +71,8 @@ func initialArena() *arena {
 	return newArena(initialSnake(), pointsChan, 20, 20)
 }
 
-func (g *Game) end() {
-	g.isOver = true
-}
-
 func (g *Game) moveInterval() time.Duration {
-	return time.Duration(1) * time.Second
-}
-
-func (g *Game) retry() {
-	g.arena = initialArena()
-	g.score = initialScore()
-	g.isOver = false
+	return time.Duration(500) * time.Millisecond
 }
 
 func (g *Game) addPoints(p int) {

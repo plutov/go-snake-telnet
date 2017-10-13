@@ -67,16 +67,18 @@ func (s *server) handleConnection(conn net.Conn) {
 
 	// Clear screen and move to 0:0
 	conn.Write([]byte(clearASCII + leftTopASCII))
-	conn.Write([]byte(leftTopASCII + game.Render()))
-
-	go game.Start()
+	conn.Write([]byte(leftTopASCII))
 
 	go s.read(conn, game)
+	go game.Start()
 
-	tick := time.Tick(1 * time.Second)
+	tick := time.Tick(250 * time.Millisecond)
 	for range tick {
 		// Move to 0:0 and render
 		conn.Write([]byte(leftTopASCII + game.Render()))
+		if game.IsOver {
+			conn.Close()
+		}
 	}
 }
 
@@ -85,6 +87,10 @@ func (s *server) read(conn net.Conn, game *snake.Game) {
 	reader := bufio.NewReader(conn)
 
 	for {
+		if game.IsOver {
+			return
+		}
+
 		data, _, err := reader.ReadLine()
 
 		if err == nil {

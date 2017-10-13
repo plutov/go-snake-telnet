@@ -59,18 +59,18 @@ func (a *arena) moveSnake() error {
 		return a.snake.die()
 	}
 
-	/*if a.hasFood(a, a.snake.head()) {
+	if a.hasFood(a, a.snake.head()) {
 		go a.addPoints(a.food.points)
 		a.snake.length++
 		a.placeFood()
-	}*/
+	}
 
 	return nil
 }
 
 func (a *arena) snakeLeftArena() bool {
 	h := a.snake.head()
-	return h.x > a.width || h.y > a.height || h.x < 0 || h.y < 0
+	return h.x >= a.width || h.y >= a.height || h.x < 0 || h.y < 0
 }
 
 func (a *arena) addPoints(p int) {
