@@ -2,7 +2,9 @@
 
 package snake
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 type coord struct {
 	x, y int
@@ -70,7 +72,7 @@ func (a *arena) moveSnake() error {
 
 func (a *arena) snakeLeftArena() bool {
 	h := a.snake.head()
-	return h.x >= a.width || h.y >= a.height || h.x < 0 || h.y < 0
+	return h.x > a.width-1 || h.y > a.height-1 || h.x < 0 || h.y < 0
 }
 
 func (a *arena) addPoints(p int) {

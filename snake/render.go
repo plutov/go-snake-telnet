@@ -23,7 +23,7 @@ const (
 	snakeSymbol    = "*"
 	foodSymbol     = "@"
 	gameOver       = "Game over!"
-	fieldTop       = 6
+	fieldTop       = 7
 	fieldLeft      = 1
 )
 

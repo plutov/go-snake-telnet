@@ -101,12 +101,13 @@ func (s *server) read(conn net.Conn, game *snake.Game) {
 				}
 			}
 		} else {
-			log.Println("Read error: " + err.Error())
 			if err == io.EOF {
 				game.IsOver = true
 				conn.Close()
 				return
 			}
+
+			log.Println("Read error: " + err.Error())
 		}
 	}
 }
