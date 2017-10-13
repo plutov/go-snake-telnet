@@ -72,7 +72,7 @@ func (s *server) handleConnection(conn net.Conn) {
 	go s.read(conn, game)
 	go game.Start()
 
-	tick := time.Tick(250 * time.Millisecond)
+	tick := time.Tick(300 * time.Millisecond)
 	for range tick {
 		// Move to 0:0 and render
 		conn.Write([]byte(leftTopASCII + game.Render()))
@@ -87,11 +87,10 @@ func (s *server) read(conn net.Conn, game *snake.Game) {
 	reader := bufio.NewReader(conn)
 
 	for {
+		data, _, err := reader.ReadLine()
 		if game.IsOver {
 			return
 		}
-
-		data, _, err := reader.ReadLine()
 
 		if err == nil {
 			key := strings.ToLower(strings.TrimSpace(string(data)))

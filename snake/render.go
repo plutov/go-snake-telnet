@@ -27,6 +27,35 @@ const (
 	fieldLeft      = 1
 )
 
+func (a *arena) buildCachedPartials() {
+	empty := []string{}
+	for i := 0; i < a.width; i++ {
+		empty = append(empty, emptySymbol)
+	}
+	a.emptyRow = empty
+
+	horizontal := []string{}
+	horizontal = append(horizontal, verticalLine)
+	for i := 0; i < a.width; i++ {
+		horizontal = append(horizontal, horizontalLine)
+	}
+	a.horizontalRow = horizontal
+
+	a.titleRow = renderString(title)
+	a.authorRow = renderString(author)
+	a.usageRow = renderString(usage)
+	a.moveRow = renderString(move)
+	a.inputRow = renderString(input)
+}
+
+func renderString(s string) []string {
+	row := []string{}
+	for _, r := range s {
+		row = append(row, string(r))
+	}
+	return row
+}
+
 // Render returns game arena as string
 func (g *Game) Render() string {
 	ascii := ""
@@ -57,13 +86,7 @@ func (g *Game) genMatrix() *matrix {
 
 func (m *matrix) renderArena(a *arena, g *Game) {
 	// Add horizontal line on top
-	horizontal := []string{}
-	horizontal = append(horizontal, verticalLine)
-	for i := 0; i < a.width; i++ {
-		horizontal = append(horizontal, horizontalLine)
-	}
-	horizontal = append(horizontal, verticalLine)
-	m.cells = append(m.cells, horizontal)
+	m.cells = append(m.cells, a.horizontalRow)
 
 	// Render battlefield
 	for i := 0; i < a.height; i++ {
@@ -89,7 +112,7 @@ func (m *matrix) renderArena(a *arena, g *Game) {
 	}
 
 	// Add horizontal line on bottom
-	m.cells = append(m.cells, horizontal)
+	m.cells = append(m.cells, a.horizontalRow)
 }
 
 func (m *matrix) renderSnake(s *snake) {
@@ -106,24 +129,20 @@ func (m *matrix) renderScore(a *arena, scoreVal int) {
 	m.addEmptyRow(a)
 	m.renderString(fmt.Sprintf("%s%d", score, scoreVal))
 	m.addEmptyRow(a)
-	m.renderString(input)
+	m.cells = append(m.cells, a.inputRow)
 }
 
 func (m *matrix) renderTitle(a *arena) {
-	m.renderString(title)
-	m.renderString(author)
+	m.cells = append(m.cells, a.titleRow)
+	m.cells = append(m.cells, a.authorRow)
 	m.addEmptyRow(a)
-	m.renderString(move)
-	m.renderString(usage)
+	m.cells = append(m.cells, a.moveRow)
+	m.cells = append(m.cells, a.usageRow)
 	m.addEmptyRow(a)
 }
 
 func (m *matrix) addEmptyRow(a *arena) {
-	empty := []string{}
-	for i := 0; i < a.width; i++ {
-		empty = append(empty, emptySymbol)
-	}
-	m.cells = append(m.cells, empty)
+	m.cells = append(m.cells, a.emptyRow)
 }
 
 func (m *matrix) renderString(s string) {

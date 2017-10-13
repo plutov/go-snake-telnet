@@ -2,8 +2,6 @@
 
 package snake
 
-type keyboardKey rune
-
 // KeyboardEvent type
 type KeyboardEvent struct {
 	Key string

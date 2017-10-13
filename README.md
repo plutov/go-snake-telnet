@@ -1,4 +1,4 @@
-### Snake over Telnet in Go
+### Snake over Telnet in Go [![Build Status](https://travis-ci.org/plutov/go-snake-telnet.svg?branch=master)](https://travis-ci.org/plutov/go-snake-telnet)
 
 Try it:
 

@@ -19,10 +19,12 @@ type Game struct {
 
 // NewGame returns Game obj
 func NewGame() *Game {
-	return &Game{
+	g := Game{
 		arena: initialArena(),
 		score: initialScore(),
 	}
+	g.arena.buildCachedPartials()
+	return &g
 }
 
 // Start game func
@@ -37,7 +39,9 @@ func (g *Game) Start() {
 			g.addPoints(p)
 		case e := <-g.KeyboardEventsChan:
 			d := keyToDirection(e.Key)
-			g.arena.snake.changeDirection(d)
+			if d > 0 {
+				g.arena.snake.changeDirection(d)
+			}
 		default:
 			if g.IsOver {
 				log.Printf("Game over, score: %d\n", g.score)
@@ -71,7 +75,7 @@ func initialArena() *arena {
 }
 
 func (g *Game) moveInterval() time.Duration {
-	return time.Duration(500) * time.Millisecond
+	return time.Duration(600) * time.Millisecond
 }
 
 func (g *Game) addPoints(p int) {

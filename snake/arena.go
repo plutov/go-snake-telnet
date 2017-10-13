@@ -11,12 +11,19 @@ type coord struct {
 }
 
 type arena struct {
-	food       *food
-	snake      *snake
-	hasFood    func(*arena, coord) bool
-	height     int
-	width      int
-	pointsChan chan (int)
+	food          *food
+	snake         *snake
+	hasFood       func(*arena, coord) bool
+	height        int
+	width         int
+	pointsChan    chan (int)
+	emptyRow      []string
+	horizontalRow []string
+	titleRow      []string
+	authorRow     []string
+	usageRow      []string
+	moveRow       []string
+	inputRow      []string
 }
 
 func newArena(s *snake, h, w int) *arena {
@@ -39,16 +46,12 @@ func (a *arena) placeFood() {
 		x = rand.Intn(a.width)
 		y = rand.Intn(a.height)
 
-		if !a.isOccupied(coord{x: x, y: y}) {
+		if !a.snake.isOnPosition(coord{x: x, y: y}) {
 			break
 		}
 	}
 
 	a.food = newFood(x, y)
-}
-
-func (a *arena) isOccupied(c coord) bool {
-	return a.snake.isOnPosition(c)
 }
 
 func (a *arena) moveSnake() error {
@@ -61,7 +64,9 @@ func (a *arena) moveSnake() error {
 	}
 
 	if a.hasFood(a, a.snake.head()) {
-		go a.addPoints(a.food.points)
+		go func() {
+			a.pointsChan <- a.food.points
+		}()
 		a.snake.length++
 		a.placeFood()
 	}
@@ -72,10 +77,6 @@ func (a *arena) moveSnake() error {
 func (a *arena) snakeLeftArena() bool {
 	h := a.snake.head()
 	return h.x > a.width-1 || h.y > a.height-1 || h.x < 0 || h.y < 0
-}
-
-func (a *arena) addPoints(p int) {
-	a.pointsChan <- p
 }
 
 func hasFood(a *arena, c coord) bool {
