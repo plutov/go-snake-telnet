@@ -4,6 +4,7 @@ package snake
 
 import (
 	"fmt"
+	"strings"
 )
 
 type matrix struct {
@@ -62,10 +63,7 @@ func (g *Game) Render() string {
 
 	m := g.genMatrix()
 	for _, row := range m.cells {
-		for _, cell := range row {
-			ascii += cell
-		}
-		ascii += "\n"
+		ascii += strings.Join(row, "") + "\n"
 	}
 
 	return ascii
