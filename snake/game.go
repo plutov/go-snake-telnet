@@ -10,6 +10,7 @@ import (
 // Game type
 type Game struct {
 	KeyboardEventsChan chan KeyboardEvent
+	PointsChan         chan int
 	matrix             *matrix
 	arena              *arena
 	score              int
@@ -27,10 +28,12 @@ func NewGame() *Game {
 // Start game func
 func (g *Game) Start() {
 	g.KeyboardEventsChan = make(chan KeyboardEvent)
+	g.PointsChan = make(chan int)
+	g.arena.pointsChan = g.PointsChan
 
 	for {
 		select {
-		case p := <-pointsChan:
+		case p := <-g.PointsChan:
 			g.addPoints(p)
 		case e := <-g.KeyboardEventsChan:
 			d := keyToDirection(e.Key)
@@ -50,10 +53,6 @@ func (g *Game) Start() {
 	}
 }
 
-var (
-	pointsChan = make(chan int)
-)
-
 func initialSnake() *snake {
 	return newSnake(RIGHT, []coord{
 		coord{x: 1, y: 1},
@@ -68,7 +67,7 @@ func initialScore() int {
 }
 
 func initialArena() *arena {
-	return newArena(initialSnake(), pointsChan, 20, 20)
+	return newArena(initialSnake(), 20, 20)
 }
 
 func (g *Game) moveInterval() time.Duration {

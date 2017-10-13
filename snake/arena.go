@@ -19,13 +19,12 @@ type arena struct {
 	pointsChan chan (int)
 }
 
-func newArena(s *snake, p chan (int), h, w int) *arena {
+func newArena(s *snake, h, w int) *arena {
 	a := &arena{
-		snake:      s,
-		height:     h,
-		width:      w,
-		pointsChan: p,
-		hasFood:    hasFood,
+		snake:   s,
+		height:  h,
+		width:   w,
+		hasFood: hasFood,
 	}
 
 	a.placeFood()
