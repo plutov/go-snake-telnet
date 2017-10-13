@@ -20,7 +20,7 @@ const (
 	horizontalLine = "-"
 	verticalLine   = "|"
 	emptySymbol    = " "
-	snakeSymbol    = "x"
+	snakeSymbol    = "*"
 	foodSymbol     = "@"
 	gameOver       = "Game over!"
 	fieldTop       = 6
@@ -56,14 +56,16 @@ func (g *Game) genMatrix() *matrix {
 }
 
 func (m *matrix) renderArena(a *arena, g *Game) {
+	// Add horizontal line on top
 	horizontal := []string{}
 	horizontal = append(horizontal, verticalLine)
 	for i := 0; i < a.width; i++ {
 		horizontal = append(horizontal, horizontalLine)
 	}
 	horizontal = append(horizontal, verticalLine)
-
 	m.cells = append(m.cells, horizontal)
+
+	// Render battlefield
 	for i := 0; i < a.height; i++ {
 		if i == 1 && g.IsOver {
 			row := []string{verticalLine, emptySymbol}
@@ -86,6 +88,7 @@ func (m *matrix) renderArena(a *arena, g *Game) {
 		m.cells = append(m.cells, row)
 	}
 
+	// Add horizontal line on bottom
 	m.cells = append(m.cells, horizontal)
 }
 

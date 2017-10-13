@@ -53,7 +53,6 @@ func (s *server) runServer() {
 		conn, err := s.listener.Accept()
 		if err != nil {
 			log.Printf("Failed to accept connection: %s\n", err.Error())
-
 			continue
 		}
 
