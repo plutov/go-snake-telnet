@@ -59,11 +59,11 @@ func (a *arena) moveSnake() error {
 		return a.snake.die()
 	}
 
-	if a.hasFood(a, a.snake.head()) {
+	/*if a.hasFood(a, a.snake.head()) {
 		go a.addPoints(a.food.points)
 		a.snake.length++
 		a.placeFood()
-	}
+	}*/
 
 	return nil
 }

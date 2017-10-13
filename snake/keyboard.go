@@ -4,8 +4,9 @@ package snake
 
 type keyboardKey rune
 
-type keyboardEvent struct {
-	key string
+// KeyboardEvent type
+type KeyboardEvent struct {
+	Key string
 }
 
 func keyToDirection(k string) direction {
@@ -20,12 +21,5 @@ func keyToDirection(k string) direction {
 		return UP
 	default:
 		return 0
-	}
-}
-
-func listenToKeyboard(evChan chan keyboardEvent) {
-	for {
-		var key = ""
-		evChan <- keyboardEvent{key: key}
 	}
 }

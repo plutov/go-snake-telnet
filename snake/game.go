@@ -8,27 +8,31 @@ import (
 
 // Game type
 type Game struct {
-	matrix *matrix
-	arena  *arena
-	score  int
-	isOver bool
+	KeyboardEventsChan chan KeyboardEvent
+	matrix             *matrix
+	arena              *arena
+	score              int
+	isOver             bool
 }
 
 // NewGame returns Game obj
 func NewGame() *Game {
-	return &Game{arena: initialArena(), score: initialScore()}
+	return &Game{
+		arena: initialArena(),
+		score: initialScore(),
+	}
 }
 
 // Start game func
 func (g *Game) Start() {
-	go listenToKeyboard(keyboardEventsChan)
+	g.KeyboardEventsChan = make(chan KeyboardEvent)
 
 	for {
 		select {
 		case p := <-pointsChan:
 			g.addPoints(p)
-		case e := <-keyboardEventsChan:
-			d := keyToDirection(e.key)
+		case e := <-g.KeyboardEventsChan:
+			d := keyToDirection(e.Key)
 			g.arena.snake.changeDirection(d)
 		default:
 			if !g.isOver {
@@ -43,8 +47,9 @@ func (g *Game) Start() {
 }
 
 var (
-	pointsChan         = make(chan int)
-	keyboardEventsChan = make(chan keyboardEvent)
+	pointsChan = make(chan int)
+	// KeyboardEventsChan - keyboard input will go here
+
 )
 
 func initialSnake() *snake {
@@ -69,8 +74,7 @@ func (g *Game) end() {
 }
 
 func (g *Game) moveInterval() time.Duration {
-	ms := 100 - (g.score / 10)
-	return time.Duration(ms) * time.Millisecond
+	return time.Duration(1) * time.Second
 }
 
 func (g *Game) retry() {

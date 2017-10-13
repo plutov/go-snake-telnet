@@ -1,6 +1,8 @@
 package snake
 
-import "errors"
+import (
+	"errors"
+)
 
 const (
 	// RIGHT const
@@ -47,7 +49,7 @@ func (s *snake) head() coord {
 }
 
 func (s *snake) die() error {
-	return errors.New("Died")
+	return errors.New("Game over")
 }
 
 func (s *snake) move() error {
@@ -56,13 +58,13 @@ func (s *snake) move() error {
 
 	switch s.direction {
 	case RIGHT:
-		c.x++
-	case LEFT:
-		c.x--
-	case UP:
 		c.y++
-	case DOWN:
+	case LEFT:
 		c.y--
+	case UP:
+		c.x--
+	case DOWN:
+		c.x++
 	}
 
 	if s.isOnPosition(c) {

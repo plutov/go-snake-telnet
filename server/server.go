@@ -3,9 +3,11 @@
 package server
 
 import (
+	"bufio"
 	"flag"
 	"log"
 	"net"
+	"strings"
 	"time"
 
 	"github.com/plutov/go-snake-telnet/snake"
@@ -56,19 +58,44 @@ func (s *server) runServer() {
 
 		log.Println("Accepted incoming connection from " + conn.RemoteAddr().String())
 
-		game := snake.NewGame()
-		go s.handleConnection(conn, game)
+		go s.handleConnection(conn)
 	}
 }
 
-func (s *server) handleConnection(conn net.Conn, game *snake.Game) {
+func (s *server) handleConnection(conn net.Conn) {
+	game := snake.NewGame()
+
 	// Clear screen and move to 0:0
 	conn.Write([]byte(clearASCII + leftTopASCII))
 	conn.Write([]byte(leftTopASCII + game.Render()))
+
+	go game.Start()
+
+	go s.read(conn, game)
 
 	tick := time.Tick(1 * time.Second)
 	for range tick {
 		// Move to 0:0 and render
 		conn.Write([]byte(leftTopASCII + game.Render()))
+	}
+}
+
+// Accept input and send it to KeyboardEventsChan
+func (s *server) read(conn net.Conn, game *snake.Game) {
+	reader := bufio.NewReader(conn)
+
+	for {
+		data, _, err := reader.ReadLine()
+
+		if err == nil {
+			key := strings.ToLower(strings.TrimSpace(string(data)))
+			if len(key) > 0 {
+				game.KeyboardEventsChan <- snake.KeyboardEvent{
+					Key: string(key[0]),
+				}
+			}
+		} else {
+			log.Println("Read error: " + err.Error())
+		}
 	}
 }
