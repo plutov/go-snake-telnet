@@ -29,35 +29,6 @@ const (
 	fieldLeft      = 1
 )
 
-func (a *arena) buildCachedPartials() {
-	empty := []string{}
-	for i := 0; i < a.width; i++ {
-		empty = append(empty, emptySymbol)
-	}
-	a.emptyRow = empty
-
-	horizontal := []string{}
-	horizontal = append(horizontal, verticalLine)
-	for i := 0; i < a.width; i++ {
-		horizontal = append(horizontal, horizontalLine)
-	}
-	a.horizontalRow = horizontal
-
-	a.titleRow = renderString(title)
-	a.authorRow = renderString(author)
-	a.usageRow = renderString(usage)
-	a.moveRow = renderString(move)
-	a.inputRow = renderString(input)
-}
-
-func renderString(s string) []string {
-	row := []string{}
-	for _, r := range s {
-		row = append(row, string(r))
-	}
-	return row
-}
-
 // Render returns game arena as string
 func (g *Game) Render() string {
 	ascii := ""
@@ -146,9 +117,31 @@ func (m *matrix) addEmptyRow(a *arena) {
 }
 
 func (m *matrix) renderString(s string) {
-	row := []string{}
-	for _, r := range s {
-		row = append(row, string(r))
-	}
+	row := renderString(s)
 	m.cells = append(m.cells, row)
+}
+
+func (a *arena) buildCachedPartials() {
+	empty := []string{}
+	for i := 0; i < a.width; i++ {
+		empty = append(empty, emptySymbol)
+	}
+	a.emptyRow = empty
+
+	horizontal := []string{}
+	horizontal = append(horizontal, verticalLine)
+	for i := 0; i < a.width; i++ {
+		horizontal = append(horizontal, horizontalLine)
+	}
+	a.horizontalRow = horizontal
+
+	a.titleRow = renderString(title)
+	a.authorRow = renderString(author)
+	a.usageRow = renderString(usage)
+	a.moveRow = renderString(move)
+	a.inputRow = renderString(input)
+}
+
+func renderString(s string) []string {
+	return strings.Split(s, "")
 }
