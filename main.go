@@ -3,9 +3,17 @@
 package main
 
 import (
+	"flag"
+
 	"github.com/plutov/go-snake-telnet/server"
 )
 
 func main() {
-	server.Run()
+	var host, port string
+	flag.StringVar(&host, "host", "localhost", "TCP Host")
+	flag.StringVar(&port, "port", "50000", "TCP Port")
+	flag.Parse()
+
+	s := server.New(host + ":" + port)
+	s.Run()
 }

@@ -69,7 +69,7 @@ func (s *snake) move() error {
 		c.x++
 	}
 
-	if s.isOnPosition(c) {
+	if s.hits(c) {
 		return s.die()
 	}
 
@@ -82,7 +82,7 @@ func (s *snake) move() error {
 	return nil
 }
 
-func (s *snake) isOnPosition(c coord) bool {
+func (s *snake) hits(c coord) bool {
 	for _, b := range s.body {
 		if b.x == c.x && b.y == c.y {
 			return true

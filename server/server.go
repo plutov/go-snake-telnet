@@ -4,7 +4,6 @@ package server
 
 import (
 	"bufio"
-	"flag"
 	"io"
 	"log"
 	"net"
@@ -14,43 +13,35 @@ import (
 	"github.com/plutov/go-snake-telnet/snake"
 )
 
-var (
-	host string
-	port string
-)
-
 const (
 	leftTopASCII = "\033[0;0H"
 	clearASCII   = "\033[2J"
 )
 
-type server struct {
-	listener net.Listener
+// Server struct
+type Server struct {
+	addr string
 }
 
-// Run prepars the telnet server and begins running it.
-func Run() {
-	flag.StringVar(&host, "host", "localhost", "TCP Host")
-	flag.StringVar(&port, "port", "50000", "TCP Port")
-	flag.Parse()
+// New creates new Server instance
+func New(addr string) *Server {
+	return &Server{
+		addr: addr,
+	}
+}
 
-	listener, err := net.Listen("tcp", host+":"+port)
+// Run the telnet server
+func (s *Server) Run() {
+	listener, err := net.Listen("tcp", s.addr)
 	if err != nil {
 		log.Fatal("Failed to start TCP server: " + err.Error())
 	}
 
-	log.Println("TCP server started on " + host + ":" + port)
-
-	server := new(server)
-	server.listener = listener
-	server.runServer()
-}
-
-func (s *server) runServer() {
-	defer s.listener.Close()
+	defer listener.Close()
+	log.Printf("TCP server started on %s", s.addr)
 
 	for {
-		conn, err := s.listener.Accept()
+		conn, err := listener.Accept()
 		if err != nil {
 			log.Printf("Failed to accept connection: %s\n", err.Error())
 			continue
@@ -62,7 +53,7 @@ func (s *server) runServer() {
 	}
 }
 
-func (s *server) handleConnection(conn net.Conn) {
+func (s *Server) handleConnection(conn net.Conn) {
 	game := snake.NewGame()
 
 	// Clear screen and move to 0:0
@@ -83,7 +74,7 @@ func (s *server) handleConnection(conn net.Conn) {
 }
 
 // Accept input and send it to KeyboardEventsChan
-func (s *server) read(conn net.Conn, game *snake.Game) {
+func (s *Server) read(conn net.Conn, game *snake.Game) {
 	reader := bufio.NewReader(conn)
 
 	for {
@@ -91,22 +82,22 @@ func (s *server) read(conn net.Conn, game *snake.Game) {
 		if game.IsOver {
 			return
 		}
-
-		if err == nil {
-			key := strings.ToLower(strings.TrimSpace(string(data)))
-			if len(key) > 0 {
-				game.KeyboardEventsChan <- snake.KeyboardEvent{
-					Key: string(key[0]),
-				}
-			}
-		} else {
+		if err != nil {
 			if err == io.EOF {
 				game.IsOver = true
 				conn.Close()
-				return
+				break
 			}
 
 			log.Println("Read error: " + err.Error())
+			continue
+		}
+
+		key := strings.ToLower(strings.TrimSpace(string(data)))
+		if len(key) > 0 {
+			game.KeyboardEventsChan <- snake.KeyboardEvent{
+				Key: string(key[0]),
+			}
 		}
 	}
 }

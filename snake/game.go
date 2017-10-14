@@ -28,7 +28,6 @@ func init() {
 type Game struct {
 	KeyboardEventsChan chan KeyboardEvent
 	PointsChan         chan int
-	matrix             *matrix
 	arena              *arena
 	score              int
 	IsOver             bool

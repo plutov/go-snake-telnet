@@ -46,7 +46,7 @@ func (a *arena) placeFood() {
 		x = rand.Intn(a.width)
 		y = rand.Intn(a.height)
 
-		if !a.snake.isOnPosition(coord{x: x, y: y}) {
+		if !a.snake.hits(coord{x: x, y: y}) {
 			break
 		}
 	}
