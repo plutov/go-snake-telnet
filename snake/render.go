@@ -17,6 +17,7 @@ const (
 	move           = "Move:"
 	usage          = "W,D,S,A <Enter>"
 	score          = "Score: "
+	topScore       = "Top score: "
 	input          = "Your input: "
 	horizontalLine = "-"
 	verticalLine   = "|"
@@ -126,6 +127,7 @@ func (m *matrix) renderFood(x, y int) {
 func (m *matrix) renderScore(a *arena, scoreVal int) {
 	m.addEmptyRow(a)
 	m.renderString(fmt.Sprintf("%s%d", score, scoreVal))
+	m.renderString(fmt.Sprintf("%s%d", topScore, topScoreVal))
 	m.addEmptyRow(a)
 	m.cells = append(m.cells, a.inputRow)
 }

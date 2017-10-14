@@ -7,6 +7,23 @@ import (
 	"time"
 )
 
+var (
+	topScoreChan chan int
+	topScoreVal  int
+)
+
+func init() {
+	topScoreChan = make(chan int)
+	go func() {
+		for {
+			s := <-topScoreChan
+			if s > topScoreVal {
+				topScoreVal = s
+			}
+		}
+	}()
+}
+
 // Game type
 type Game struct {
 	KeyboardEventsChan chan KeyboardEvent
@@ -49,6 +66,7 @@ func (g *Game) Start() {
 			}
 
 			if err := g.arena.moveSnake(); err != nil {
+				topScoreChan <- g.score
 				g.IsOver = true
 			}
 
@@ -75,7 +93,12 @@ func initialArena() *arena {
 }
 
 func (g *Game) moveInterval() time.Duration {
-	return time.Duration(600) * time.Millisecond
+	ms := 600 - g.score
+	if ms < 200 {
+		ms = 200
+	}
+
+	return time.Duration(ms) * time.Millisecond
 }
 
 func (g *Game) addPoints(p int) {
