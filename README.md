@@ -14,6 +14,10 @@ go get github.com/plutov/go-snake-telnet
 go-snake-telnet --host localhost --port 8080
 ```
 
+```
+telnet localhost 8080
+```
+
 ### Tests
 
 ```

@@ -70,15 +70,9 @@ func (m *matrix) renderArena(a *arena, g *Game) {
 			}
 			row = append(row, verticalLine)
 			m.cells = append(m.cells, row)
-			continue
+		} else {
+			m.cells = append(m.cells, a.arenaRow)
 		}
-
-		row := []string{verticalLine}
-		for i := 0; i < a.width; i++ {
-			row = append(row, emptySymbol)
-		}
-		row = append(row, verticalLine)
-		m.cells = append(m.cells, row)
 	}
 
 	// Add horizontal line on bottom
@@ -122,19 +116,9 @@ func (m *matrix) renderString(s string) {
 }
 
 func (a *arena) buildCachedPartials() {
-	empty := []string{}
-	for i := 0; i < a.width; i++ {
-		empty = append(empty, emptySymbol)
-	}
-	a.emptyRow = empty
-
-	horizontal := []string{}
-	horizontal = append(horizontal, verticalLine)
-	for i := 0; i < a.width; i++ {
-		horizontal = append(horizontal, horizontalLine)
-	}
-	a.horizontalRow = horizontal
-
+	a.emptyRow = []string{}
+	a.horizontalRow = strings.Split(verticalLine+strings.Repeat(horizontalLine, a.width)+verticalLine, "")
+	a.arenaRow = strings.Split(verticalLine+strings.Repeat(emptySymbol, a.width)+verticalLine, "")
 	a.titleRow = renderString(title)
 	a.authorRow = renderString(author)
 	a.usageRow = renderString(usage)

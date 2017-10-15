@@ -24,6 +24,7 @@ type arena struct {
 	usageRow      []string
 	moveRow       []string
 	inputRow      []string
+	arenaRow      []string
 }
 
 func newArena(s *snake, h, w int) *arena {
