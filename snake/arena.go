@@ -11,20 +11,12 @@ type coord struct {
 }
 
 type arena struct {
-	food          *food
-	snake         *snake
-	hasFood       func(*arena, coord) bool
-	height        int
-	width         int
-	pointsChan    chan (int)
-	emptyRow      []string
-	horizontalRow []string
-	titleRow      []string
-	authorRow     []string
-	usageRow      []string
-	moveRow       []string
-	inputRow      []string
-	arenaRow      []string
+	food       *food
+	snake      *snake
+	hasFood    func(*arena, coord) bool
+	height     int
+	width      int
+	pointsChan chan (int)
 }
 
 func newArena(s *snake, h, w int) *arena {

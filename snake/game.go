@@ -4,6 +4,7 @@ package snake
 
 import (
 	"log"
+	"math"
 	"time"
 )
 
@@ -35,12 +36,10 @@ type Game struct {
 
 // NewGame returns Game obj
 func NewGame() *Game {
-	g := Game{
+	return &Game{
 		arena: initialArena(),
 		score: initialScore(),
 	}
-	g.arena.buildCachedPartials()
-	return &g
 }
 
 // Start game func
@@ -92,11 +91,7 @@ func initialArena() *arena {
 }
 
 func (g *Game) moveInterval() time.Duration {
-	ms := 600 - g.score
-	if ms < 200 {
-		ms = 200
-	}
-
+	ms := 400 - math.Max(float64(g.score), 100)
 	return time.Duration(ms) * time.Millisecond
 }
 

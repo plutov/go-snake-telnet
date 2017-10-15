@@ -56,7 +56,7 @@ func (g *Game) genMatrix() *matrix {
 
 func (m *matrix) renderArena(a *arena, g *Game) {
 	// Add horizontal line on top
-	m.cells = append(m.cells, a.horizontalRow)
+	m.cells = append(m.cells, strings.Split(verticalLine+strings.Repeat(horizontalLine, a.width)+verticalLine, ""))
 
 	// Render battlefield
 	for i := 0; i < a.height; i++ {
@@ -71,19 +71,12 @@ func (m *matrix) renderArena(a *arena, g *Game) {
 			row = append(row, verticalLine)
 			m.cells = append(m.cells, row)
 		} else {
-
-			row := []string{verticalLine}
-			for i := 0; i < a.width; i++ {
-				row = append(row, emptySymbol)
-			}
-			row = append(row, verticalLine)
-			m.cells = append(m.cells, row)
-			//m.cells = append(m.cells, a.arenaRow)
+			m.cells = append(m.cells, strings.Split(verticalLine+strings.Repeat(emptySymbol, a.width)+verticalLine, ""))
 		}
 	}
 
 	// Add horizontal line on bottom
-	m.cells = append(m.cells, a.horizontalRow)
+	m.cells = append(m.cells, strings.Split(verticalLine+strings.Repeat(horizontalLine, a.width)+verticalLine, ""))
 }
 
 func (m *matrix) renderSnake(s *snake) {
@@ -97,40 +90,25 @@ func (m *matrix) renderFood(x, y int) {
 }
 
 func (m *matrix) renderScore(a *arena, scoreVal int) {
-	m.addEmptyRow(a)
+	m.cells = append(m.cells, []string{})
 	m.renderString(fmt.Sprintf("%s%d", score, scoreVal))
 	m.renderString(fmt.Sprintf("%s%d", topScore, topScoreVal))
-	m.addEmptyRow(a)
-	m.cells = append(m.cells, a.inputRow)
+	m.cells = append(m.cells, []string{})
+	m.cells = append(m.cells, renderString(input))
 }
 
 func (m *matrix) renderTitle(a *arena) {
-	m.cells = append(m.cells, a.titleRow)
-	m.cells = append(m.cells, a.authorRow)
-	m.addEmptyRow(a)
-	m.cells = append(m.cells, a.moveRow)
-	m.cells = append(m.cells, a.usageRow)
-	m.addEmptyRow(a)
-}
-
-func (m *matrix) addEmptyRow(a *arena) {
-	m.cells = append(m.cells, a.emptyRow)
+	m.cells = append(m.cells, renderString(title))
+	m.cells = append(m.cells, renderString(author))
+	m.cells = append(m.cells, []string{})
+	m.cells = append(m.cells, renderString(move))
+	m.cells = append(m.cells, renderString(usage))
+	m.cells = append(m.cells, []string{})
 }
 
 func (m *matrix) renderString(s string) {
 	row := renderString(s)
 	m.cells = append(m.cells, row)
-}
-
-func (a *arena) buildCachedPartials() {
-	a.emptyRow = []string{}
-	a.horizontalRow = strings.Split(verticalLine+strings.Repeat(horizontalLine, a.width)+verticalLine, "")
-	a.arenaRow = strings.Split(verticalLine+strings.Repeat(emptySymbol, a.width)+verticalLine, "")
-	a.titleRow = renderString(title)
-	a.authorRow = renderString(author)
-	a.usageRow = renderString(usage)
-	a.moveRow = renderString(move)
-	a.inputRow = renderString(input)
 }
 
 func renderString(s string) []string {
