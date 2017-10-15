@@ -71,7 +71,14 @@ func (m *matrix) renderArena(a *arena, g *Game) {
 			row = append(row, verticalLine)
 			m.cells = append(m.cells, row)
 		} else {
-			m.cells = append(m.cells, a.arenaRow)
+
+			row := []string{verticalLine}
+			for i := 0; i < a.width; i++ {
+				row = append(row, emptySymbol)
+			}
+			row = append(row, verticalLine)
+			m.cells = append(m.cells, row)
+			//m.cells = append(m.cells, a.arenaRow)
 		}
 	}
 
