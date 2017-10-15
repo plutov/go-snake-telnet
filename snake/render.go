@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-type matrix struct {
+type screen struct {
 	cells [][]string
 }
 
@@ -33,7 +33,7 @@ const (
 func (g *Game) Render() string {
 	ascii := ""
 
-	m := g.genMatrix()
+	m := g.generateScreen()
 	for _, row := range m.cells {
 		ascii += strings.Join(row, "") + "\n"
 	}
@@ -41,8 +41,8 @@ func (g *Game) Render() string {
 	return ascii
 }
 
-func (g *Game) genMatrix() *matrix {
-	m := new(matrix)
+func (g *Game) generateScreen() *screen {
+	m := new(screen)
 	m.renderTitle(g.arena)
 	m.renderArena(g.arena, g)
 	if !g.IsOver {
@@ -54,7 +54,7 @@ func (g *Game) genMatrix() *matrix {
 	return m
 }
 
-func (m *matrix) renderArena(a *arena, g *Game) {
+func (m *screen) renderArena(a *arena, g *Game) {
 	// Add horizontal line on top
 	m.cells = append(m.cells, strings.Split(verticalLine+strings.Repeat(horizontalLine, a.width)+verticalLine, ""))
 
@@ -79,17 +79,17 @@ func (m *matrix) renderArena(a *arena, g *Game) {
 	m.cells = append(m.cells, strings.Split(verticalLine+strings.Repeat(horizontalLine, a.width)+verticalLine, ""))
 }
 
-func (m *matrix) renderSnake(s *snake) {
+func (m *screen) renderSnake(s *snake) {
 	for _, b := range s.body {
 		m.cells[b.x+fieldTop][b.y+fieldLeft] = snakeSymbol
 	}
 }
 
-func (m *matrix) renderFood(x, y int) {
+func (m *screen) renderFood(x, y int) {
 	m.cells[x+fieldTop][y+fieldLeft] = foodSymbol
 }
 
-func (m *matrix) renderScore(a *arena, scoreVal int) {
+func (m *screen) renderScore(a *arena, scoreVal int) {
 	m.cells = append(m.cells, []string{})
 	m.renderString(fmt.Sprintf("%s%d", score, scoreVal))
 	m.renderString(fmt.Sprintf("%s%d", topScore, topScoreVal))
@@ -97,7 +97,7 @@ func (m *matrix) renderScore(a *arena, scoreVal int) {
 	m.cells = append(m.cells, renderString(input))
 }
 
-func (m *matrix) renderTitle(a *arena) {
+func (m *screen) renderTitle(a *arena) {
 	m.cells = append(m.cells, renderString(title))
 	m.cells = append(m.cells, renderString(author))
 	m.cells = append(m.cells, []string{})
@@ -106,7 +106,7 @@ func (m *matrix) renderTitle(a *arena) {
 	m.cells = append(m.cells, []string{})
 }
 
-func (m *matrix) renderString(s string) {
+func (m *screen) renderString(s string) {
 	row := renderString(s)
 	m.cells = append(m.cells, row)
 }
