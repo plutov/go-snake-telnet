@@ -68,9 +68,12 @@ func (s *Server) handleConnection(conn net.Conn) {
 		// Move to 0:0 and render
 		conn.Write([]byte(leftTopASCII + game.Render()))
 		if game.IsOver {
-			conn.Close()
+			// Cancel ticker
+			break
 		}
 	}
+
+	conn.Close()
 }
 
 // Accept input and send it to KeyboardEventsChan
@@ -80,7 +83,7 @@ func (s *Server) read(conn net.Conn, game *snake.Game) {
 	for {
 		data, _, err := reader.ReadLine()
 		if game.IsOver {
-			return
+			break
 		}
 		if err != nil {
 			if err == io.EOF {
