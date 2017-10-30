@@ -12,6 +12,10 @@ telnet pliutau.com 8080
 ```
 go get github.com/plutov/go-snake-telnet
 go-snake-telnet --host localhost --port 8080
+
+# docker
+docker build -t go-snake-telnet .
+docker run -d -p $PORT:$PORT go-snake-telnet --host $HOST --port $PORT
 ```
 
 ```
@@ -22,10 +26,4 @@ telnet localhost 8080
 
 ```
 go test ./... -bench=.
-```
-
-### Docker
-```
-docker build -t go-snake-telnet .
-docker run -d -p $PORT:$PORT go-snake-telnet --host $HOST --port $PORT
 ```
