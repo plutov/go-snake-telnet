@@ -15,7 +15,7 @@ const (
 	title          = "Go Snake Telnet v0.2"
 	author         = "Author: pliutau.com"
 	move           = "Move:"
-	usage          = "W,D,S,A <Enter>"
+	usage          = "W,D,S,A & press ENTER"
 	score          = "Score: "
 	topScore       = "Top score: "
 	input          = "Your input: "

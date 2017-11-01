@@ -47,7 +47,7 @@ func (s *Server) Run() {
 			continue
 		}
 
-		log.Println("Accepted incoming connection from " + conn.RemoteAddr().String())
+		log.Printf("Client: %s\n", conn.RemoteAddr().String())
 
 		go s.handleConnection(conn)
 	}

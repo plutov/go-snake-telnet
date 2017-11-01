@@ -3,23 +3,48 @@
 package snake
 
 import (
+	"bufio"
+	"fmt"
 	"log"
 	"math"
+	"os"
+	"strconv"
 	"time"
 )
 
 var (
 	topScoreChan chan int
 	topScoreVal  int
+	topScoreFile *os.File
 )
 
 func init() {
+	// Get top score
+	var fileErr error
+	topScoreFile, fileErr := os.OpenFile("/tmp/snake.score", os.O_RDWR|os.O_CREATE, 0777)
+	if fileErr != nil {
+		log.Printf("can't open file: %v", fileErr)
+	}
+
+	if topScoreFile != nil {
+		r := bufio.NewReader(topScoreFile)
+		line, _, readErr := r.ReadLine()
+		if readErr != nil {
+			log.Printf("can't read file: %v", readErr)
+		} else {
+			topScoreVal, _ = strconv.Atoi(string(line))
+		}
+	}
+
 	topScoreChan = make(chan int)
 	go func() {
 		for {
 			s := <-topScoreChan
 			if s > topScoreVal {
 				topScoreVal = s
+				if topScoreFile != nil {
+					topScoreFile.WriteString(fmt.Sprintf("%d", topScoreVal))
+				}
 			}
 		}
 	}()
