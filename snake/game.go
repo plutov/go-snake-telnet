@@ -23,7 +23,11 @@ func init() {
 	if readErr != nil {
 		log.Printf("can't read file: %v", readErr)
 	} else {
-		topScoreVal, _ = strconv.Atoi(string(line))
+		var castErr error
+		topScoreVal, castErr = strconv.Atoi(string(line))
+		if castErr != nil {
+			log.Printf("can't cast score: %v", castErr)
+		}
 	}
 
 	topScoreChan = make(chan int)
