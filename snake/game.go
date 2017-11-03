@@ -69,6 +69,7 @@ func (g *Game) Start() {
 		select {
 		case p := <-g.PointsChan:
 			g.addPoints(p)
+			topScoreChan <- g.score
 		case e := <-g.KeyboardEventsChan:
 			d := keyToDirection(e.Key)
 			if d > 0 {
@@ -81,7 +82,6 @@ func (g *Game) Start() {
 			}
 
 			if err := g.arena.moveSnake(); err != nil {
-				topScoreChan <- g.score
 				g.IsOver = true
 			}
 
