@@ -15,6 +15,8 @@ docker pull pltvs/go-snake-telnet .
 docker run -d -p 8080:8080 pltvs/go-snake-telnet
 ```
 
+## Play!
+
 ```bash
 telnet localhost 8080
 ```
