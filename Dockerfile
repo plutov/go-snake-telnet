@@ -1,13 +1,11 @@
-FROM golang:1.9
+FROM golang:1.11
 
-WORKDIR /go/src/app
+RUN mkdir -p /go/src/github.com/plutov/go-snake-telnet
+
+WORKDIR /go/src/github.com/plutov/go-snake-telnet
 
 COPY . .
 
-RUN mkdir -p /go/src/github.com/plutov/
-RUN ln -s /go/src/app/ /go/src/github.com/plutov/go-snake-telnet
+RUN CGO_ENABLED=0 GOOS=linux go build -o snake-telnet main.go
 
-RUN go-wrapper install
-
-ENTRYPOINT ["go-wrapper", "run"]
-CMD []
+ENTRYPOINT ["./snake-telnet"]

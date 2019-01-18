@@ -1,18 +1,21 @@
 ### Snake over Telnet in Go [![Build Status](https://travis-ci.org/plutov/go-snake-telnet.svg?branch=master)](https://travis-ci.org/plutov/go-snake-telnet)
 
 
-### Run it locally
+### Run it with go
 
-```
+```bash
 go get github.com/plutov/go-snake-telnet
-go-snake-telnet --host localhost --port 8080
-
-# docker
-docker build -t go-snake-telnet .
-docker run -d -p $PORT:$PORT go-snake-telnet --host $HOST --port $PORT
+go-snake-telnet
 ```
 
+## Run with Docker
+
+```bash
+docker pull pltvs/go-snake-telnet .
+docker run -d -p 8080:8080 pltvs/go-snake-telnet
 ```
+
+```bash
 telnet localhost 8080
 ```
 
