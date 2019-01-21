@@ -20,9 +20,7 @@ var (
 func init() {
 	// Get top score from the file
 	line, readErr := ioutil.ReadFile(topScoreFile)
-	if readErr != nil {
-		log.Printf("can't read file: %v", readErr)
-	} else {
+	if readErr == nil {
 		var castErr error
 		topScoreVal, castErr = strconv.Atoi(string(line))
 		if castErr != nil {
