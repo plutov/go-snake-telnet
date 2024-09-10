@@ -32,20 +32,20 @@ func New(addr string) *Server {
 func (s *Server) Run() {
 	listener, err := net.Listen("tcp", s.addr)
 	if err != nil {
-		log.Fatal("Failed to start TCP server: " + err.Error())
+		log.Fatal("failed to start tcp server: " + err.Error())
 	}
 
 	defer listener.Close()
-	log.Printf("TCP server started on %s", s.addr)
+	log.Printf("tcp server started on %s", s.addr)
 
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Printf("Failed to accept connection: %s\n", err.Error())
+			log.Printf("failed to accept connection: %s\n", err.Error())
 			continue
 		}
 
-		log.Printf("Client: %s\n", conn.RemoteAddr().String())
+		log.Printf("client connected: %s\n", conn.RemoteAddr().String())
 
 		go s.handleConnection(conn)
 	}
@@ -90,7 +90,7 @@ func (s *Server) read(conn net.Conn, game *snake.Game) {
 				break
 			}
 
-			log.Println("Read error: " + err.Error())
+			log.Println("read error: " + err.Error())
 			continue
 		}
 
