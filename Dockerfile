@@ -12,4 +12,6 @@ RUN apk --no-cache add ca-certificates tzdata bash
 WORKDIR /root
 COPY --from=builder /root/snakecmd ./snakecmd
 
+EXPOSE 8080
+
 CMD ["./snakecmd"]
