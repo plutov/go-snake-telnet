@@ -1,4 +1,4 @@
-### Snake over Telnet in Go
+### Snake Game over Telnet in Go
 
 ### Run it with go
 
