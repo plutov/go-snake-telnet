@@ -1,4 +1,3 @@
-// Copyright (c) 2017 Alex Pliutau
 package snake
 
 import (

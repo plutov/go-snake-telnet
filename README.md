@@ -1,5 +1,4 @@
-### Snake over Telnet in Go [![Build Status](https://travis-ci.org/plutov/go-snake-telnet.svg?branch=master)](https://travis-ci.org/plutov/go-snake-telnet)
-
+### Snake over Telnet in Go
 
 ### Run it with go
 
@@ -11,12 +10,19 @@ go-snake-telnet
 ## Run with Docker
 
 ```bash
-docker pull pltvs/go-snake-telnet .
-docker run -d -p 8080:8080 pltvs/go-snake-telnet
+docker build -t snake-telnet .
+docker run -d -p 8080:8080 snake-telnet
 ```
 
 ## Play!
 
+Make sure to install telnet first:
+
+```bash
+brew install telnet
+```
+
+Then connect to the game:
 ```bash
 telnet localhost 8080
 ```

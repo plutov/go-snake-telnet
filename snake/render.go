@@ -1,5 +1,3 @@
-// Copyright (c) 2017 Alex Pliutau
-
 package snake
 
 import (
@@ -12,8 +10,8 @@ type screen struct {
 }
 
 const (
-	title          = "Go Snake Telnet v0.2"
-	author         = "Author: pliutau.com"
+	title          = "🐍 Snake Game over Telnet v0.3"
+	author         = "Made by: @pliutau"
 	move           = "Move:"
 	usage          = "W,D,S,A & press ENTER"
 	score          = "Score: "
